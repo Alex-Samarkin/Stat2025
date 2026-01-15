@@ -1,0 +1,65 @@
+﻿<Window x:Class="WpfApp1.DataSetsWindow"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DataSets" Height="450" Width="1200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <!-- таблица датасетов -->
+            <ColumnDefinition Width="3*"/>
+            <!-- метаданные выбранного -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Таблица датасетов -->
+        <DataGrid Grid.Column="0"
+                  ItemsSource="{Binding DataSets}"
+                  SelectedItem="{Binding SelectedDataSet}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="5,5,10,5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Автор" Binding="{Binding Author}" Width="*"/>
+                <DataGridTextColumn Header="Источник" Binding="{Binding Source}" Width="*"/>
+                <DataGridTextColumn Header="Создан" Binding="{Binding CreatedAt}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Метаданные выбранного датасета -->
+        <GroupBox Grid.Column="1" Header="Метаданные выбранного DataSet" Margin="10,5,5,5">
+            <StackPanel Margin="5">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Width="90" Text="Имя:"/>
+                    <TextBox Width="250"
+                             Text="{Binding SelectedDataSet.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Width="90" Text="Автор:"/>
+                    <TextBox Width="250"
+                             Text="{Binding SelectedDataSet.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Width="90" Text="Источник:"/>
+                    <TextBox Width="250"
+                             Text="{Binding SelectedDataSet.Source, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Width="90" Text="Описание:"/>
+                    <TextBox Width="566" Height="80" TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Text="{Binding SelectedDataSet.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Width="90" Text="Создан:"/>
+                    <TextBlock Text="{Binding SelectedDataSet.CreatedAt}"/>
+                </StackPanel>
+                <Button Content="Edit selected" Height="34" Width="176" Click="Button_Click"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

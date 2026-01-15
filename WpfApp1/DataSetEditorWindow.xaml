@@ -1,0 +1,118 @@
+﻿<Window x:Class="WpfApp1.DataSetEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Редактор DataSet" Height="500" Width="900">
+    <Grid>
+        <TabControl>
+            <!-- Вкладка 1: метаданные -->
+            <TabItem Header="Метаданные">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Метаданные датасета -->
+                    <GroupBox Header="Метаданные набора" Grid.Row="0" Margin="0,0,0,5">
+                        <StackPanel Margin="5">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Имя:"/>
+                                <TextBox Width="250"
+                                         Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Автор:"/>
+                                <TextBox Width="250"
+                                         Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Источник:"/>
+                                <TextBox Width="250"
+                                         Text="{Binding Source, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Описание:"/>
+                                <TextBox Width="350" Height="80" TextWrapping="Wrap"
+                                         AcceptsReturn="True"
+                                         Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Создан:"/>
+                                <TextBlock Text="{Binding CreatedAt}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Метаданные колонок -->
+                    <GroupBox Header="Метаданные колонок" Grid.Row="1">
+                        <StackPanel Margin="5">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Колонка:"/>
+                                <ComboBox Width="200"
+                                          ItemsSource="{Binding Columns}"
+                                          DisplayMemberPath="Variable.Name"
+                                          SelectedItem="{Binding SelectedColumn}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Описание:"/>
+                                <TextBox Width="250"
+                                         Text="{Binding SelectedColumn.Variable.Description, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Width="90" Text="Ед. изм:"/>
+                                <TextBox Width="150"
+                                         Text="{Binding SelectedColumn.Variable.Unit, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Width="90" Text="Формула:"/>
+                                <TextBox Width="250"
+                                         Text="{Binding SelectedColumn.Variable.Formula, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Кнопки для метаданных -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                        <Button Content="Сохранить метаданные" Width="160" Margin="5"
+                                Click="SaveMetadata_Click"/>
+                        <Button Content="Отменить изменения" Width="160" Margin="5"
+                                Click="CancelMetadata_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка 2: данные -->
+            <TabItem Header="Данные">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              x:Name="DataGrid"
+                              ItemsSource="{Binding Table.DefaultView}"
+                              AutoGenerateColumns="True"
+                              IsReadOnly="False"
+                              Margin="0,0,0,2"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Сохранить данные" Width="140" Margin="5"
+                                Click="SaveData_Click"/>
+                        <Button Content="Отменить изменения" Width="140" Margin="5"
+                                Click="CancelData_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
+
