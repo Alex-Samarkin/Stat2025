@@ -141,7 +141,12 @@ namespace WpfApp1.Variables
         // 2. DataTable (System.Data) для биндинга к DataGrid
         // =====================================================
 
-        public DataTable ToDataTable()
+        /// <summary>
+        /// нужно перехватить нули
+        /// </summary>
+        /// <returns></returns>
+        /* 
+         * public DataTable ToDataTable()
         {
             var dt = new DataTable("DataSet");
 
@@ -167,9 +172,43 @@ namespace WpfApp1.Variables
             }
 
             return dt;
+        }*/
+        public DataTable ToDataTable()
+        {
+            var dt = new DataTable("DataSet");
+
+            foreach (var col in _columns)
+            {
+                var clrType = col.Variable.ClrType;
+
+                // Nullable<T> -> T
+                if (clrType.IsGenericType && clrType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    clrType = Nullable.GetUnderlyingType(clrType)!;
+
+                dt.Columns.Add(col.Variable.Name, clrType);
+            }
+
+            for (int row = 0; row < RowCount; row++)
+            {
+                var values = new object?[_columns.Count];
+
+                for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
+                {
+                    var v = _columns[colIndex].GetValue(row);
+
+                    // DataTable не любит null для value‑типов
+                    values[colIndex] = v ?? DBNull.Value;
+                }
+
+                dt.Rows.Add(values);
+            }
+
+            return dt;
         }
 
-        public void UpdateFromDataTable(DataTable table)
+
+        /*
+         * public void UpdateFromDataTable(DataTable table)
         {
             if (table.Columns.Count != _columns.Count)
                 throw new InvalidOperationException("Column count mismatch.");
@@ -182,6 +221,33 @@ namespace WpfApp1.Variables
                 var vector = _columns[colIndex];
                 for (int row = 0; row < RowCount; row++)
                     vector.SetValue(row, table.Rows[row][colIndex]);
+
+                vector.RebuildArrowArray();
+            }
+        }*/
+
+        public void UpdateFromDataTable(DataTable table)
+        {
+            if (table.Columns.Count != _columns.Count)
+                throw new InvalidOperationException("Column count mismatch.");
+
+            if (table.Rows.Count != RowCount)
+                throw new InvalidOperationException("Row count mismatch.");
+
+            for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
+            {
+                var vector = _columns[colIndex];
+
+                for (int row = 0; row < RowCount; row++)
+                {
+                    var cell = table.Rows[row][colIndex];
+
+                    // DBNull.Value -> null
+                    if (cell == DBNull.Value)
+                        cell = null;
+
+                    vector.SetValue(row, cell);
+                }
 
                 vector.RebuildArrowArray();
             }
