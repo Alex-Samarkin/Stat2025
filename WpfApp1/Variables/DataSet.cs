@@ -143,6 +143,7 @@ namespace WpfApp1.Variables
 
         public DataTable ToDataTable()
         {
+            /*
             var dt = new DataTable("DataSet");
 
 
@@ -165,6 +166,32 @@ namespace WpfApp1.Variables
                     values[colIndex] = _columns[colIndex].GetValue(row);
                 dt.Rows.Add(values);
             }
+            */
+
+            var dt = new DataTable("DataSet");
+
+    // Добавляем колонки
+    foreach (var col in _columns)
+    {
+        var clrType = col.Variable.ClrType;
+
+        if (clrType.IsGenericType && clrType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            clrType = Nullable.GetUnderlyingType(clrType)!;
+
+        dt.Columns.Add(col.Variable.Name, clrType);
+    }
+
+    // Добавляем строки
+    for (int row = 0; row < RowCount; row++)
+    {
+        var values = new object?[_columns.Count];
+        for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
+        {
+            var value = _columns[colIndex].GetValue(row);
+            values[colIndex] = value ?? DBNull.Value; // Ключевое исправление
+        }
+        dt.Rows.Add(values);
+    }
 
             return dt;
         }
@@ -181,7 +208,12 @@ namespace WpfApp1.Variables
             {
                 var vector = _columns[colIndex];
                 for (int row = 0; row < RowCount; row++)
-                    vector.SetValue(row, table.Rows[row][colIndex]);
+                {
+                   // vector.SetValue(row, table.Rows[row][colIndex]);
+                   object? rawValue = table.Rows[row][colIndex];
+object? value = (rawValue == DBNull.Value) ? null : rawValue;
+vector.SetValue(row, value);
+                }
 
                 vector.RebuildArrowArray();
             }
