@@ -1,0 +1,74 @@
+﻿{
+  "Name": "Dataset2",
+  "Author": "",
+  "Source": "",
+  "Description": "",
+  "CreatedAt": "2026-01-19T00:36:53.3360942Z",
+  "Columns": [
+    {
+      "Name": "Id",
+      "Description": "Row id",
+      "Unit": null,
+      "Formula": null,
+      "VariableType": "IntegerVariable",
+      "Categories": null,
+      "OrderedCategories": null,
+      "Precision": null,
+      "Scale": null,
+      "TimeUnit": null,
+      "TimeZone": null
+    },
+    {
+      "Name": "Value",
+      "Description": "Random value",
+      "Unit": null,
+      "Formula": null,
+      "VariableType": "NumericVariable",
+      "Categories": null,
+      "OrderedCategories": null,
+      "Precision": 18,
+      "Scale": 4,
+      "TimeUnit": null,
+      "TimeZone": null
+    },
+    {
+      "Name": "IsActive",
+      "Description": "Random flag",
+      "Unit": null,
+      "Formula": null,
+      "VariableType": "BoolVariable",
+      "Categories": null,
+      "OrderedCategories": null,
+      "Precision": null,
+      "Scale": null,
+      "TimeUnit": null,
+      "TimeZone": null
+    },
+    {
+      "Name": "Name",
+      "Description": "Synthetic name",
+      "Unit": null,
+      "Formula": null,
+      "VariableType": "StringVariable",
+      "Categories": null,
+      "OrderedCategories": null,
+      "Precision": null,
+      "Scale": null,
+      "TimeUnit": null,
+      "TimeZone": null
+    },
+    {
+      "Name": "Date",
+      "Description": "Sequential date",
+      "Unit": null,
+      "Formula": null,
+      "VariableType": "DateVariable",
+      "Categories": null,
+      "OrderedCategories": null,
+      "Precision": null,
+      "Scale": null,
+      "TimeUnit": null,
+      "TimeZone": null
+    }
+  ]
+}
