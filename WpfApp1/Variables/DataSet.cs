@@ -30,6 +30,35 @@ namespace WpfApp1.Variables
         public IReadOnlyList<Vector> Columns => _columns;
         public int RowCount => _columns.Count == 0 ? 0 : _columns[0].Length;
 
+
+        /// <summary>
+        /// Возвращает колонку по индексу.
+        /// </summary>
+        public Vector GetColumn(int index)
+        {
+            if (index < 0 || index >= _columns.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            return _columns[index];
+        }
+
+        /// <summary>
+        /// Индексатор для доступа к колонкам.
+        /// </summary>
+        public Vector this[int index]
+        {
+            get => GetColumn(index);
+            // при необходимости можно разрешить замену колонки:
+            // set
+            // {
+            //     if (index < 0 || index >= _columns.Count)
+            //         throw new ArgumentOutOfRangeException(nameof(index));
+            //     if (value == null) throw new ArgumentNullException(nameof(value));
+            //     if (_columns.Count > 0 && value.Length != RowCount)
+            //         throw new InvalidOperationException("New column must have same length.");
+            //     _columns[index] = value;
+            // }
+        }
+
         /// <summary>
         /// metadata
         /// </summary>
@@ -48,7 +77,7 @@ namespace WpfApp1.Variables
         public int Id { get; } = _nextId++;
 
         private static string _name = "Dataset";
-        public string? Name { get; set; } = _name+_nextId.ToString();
+        public string? Name { get; set; } = _name + _nextId.ToString();
 
         public DataSet() { CreatedAt = DateTime.UtcNow; }
 
@@ -145,88 +174,32 @@ namespace WpfApp1.Variables
         /// нужно перехватить нули
         /// </summary>
         /// <returns></returns>
-        /* 
-         * public DataTable ToDataTable()
-        {
-            /*
-            var dt = new DataTable("DataSet");
 
-
-            foreach (var col in _columns)
-            {
-                var clrType = col.Variable.ClrType;
-
-                // Если Nullable<T> -> берём T
-                if (clrType.IsGenericType && clrType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    clrType = Nullable.GetUnderlyingType(clrType)!;
-
-                dt.Columns.Add(col.Variable.Name, clrType);
-            }
-
-
-            for (int row = 0; row < RowCount; row++)
-            {
-                var values = new object?[_columns.Count];
-                for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
-                    values[colIndex] = _columns[colIndex].GetValue(row);
-                dt.Rows.Add(values);
-            }
-            */
-
-            var dt = new DataTable("DataSet");
-
-    // Добавляем колонки
-    foreach (var col in _columns)
-    {
-        var clrType = col.Variable.ClrType;
-
-        if (clrType.IsGenericType && clrType.GetGenericTypeDefinition() == typeof(Nullable<>))
-            clrType = Nullable.GetUnderlyingType(clrType)!;
-
-        dt.Columns.Add(col.Variable.Name, clrType);
-    }
-
-    // Добавляем строки
-    for (int row = 0; row < RowCount; row++)
-    {
-        var values = new object?[_columns.Count];
-        for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
-        {
-            var value = _columns[colIndex].GetValue(row);
-            values[colIndex] = value ?? DBNull.Value; // Ключевое исправление
-        }
-        dt.Rows.Add(values);
-    }
-
-            return dt;
-        }*/
         public DataTable ToDataTable()
         {
+
             var dt = new DataTable("DataSet");
 
+            // Добавляем колонки
             foreach (var col in _columns)
             {
                 var clrType = col.Variable.ClrType;
 
-                // Nullable<T> -> T
                 if (clrType.IsGenericType && clrType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     clrType = Nullable.GetUnderlyingType(clrType)!;
 
                 dt.Columns.Add(col.Variable.Name, clrType);
             }
 
+            // Добавляем строки
             for (int row = 0; row < RowCount; row++)
             {
                 var values = new object?[_columns.Count];
-
                 for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
                 {
-                    var v = _columns[colIndex].GetValue(row);
-
-                    // DataTable не любит null для value‑типов
-                    values[colIndex] = v ?? DBNull.Value;
+                    var value = _columns[colIndex].GetValue(row);
+                    values[colIndex] = value ?? DBNull.Value; // Ключевое исправление
                 }
-
                 dt.Rows.Add(values);
             }
 
@@ -234,29 +207,6 @@ namespace WpfApp1.Variables
         }
 
 
-        /*
-         * public void UpdateFromDataTable(DataTable table)
-        {
-            if (table.Columns.Count != _columns.Count)
-                throw new InvalidOperationException("Column count mismatch.");
-
-            if (table.Rows.Count != RowCount)
-                throw new InvalidOperationException("Row count mismatch.");
-
-            for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
-            {
-                var vector = _columns[colIndex];
-                for (int row = 0; row < RowCount; row++)
-                {
-                   // vector.SetValue(row, table.Rows[row][colIndex]);
-                   object? rawValue = table.Rows[row][colIndex];
-object? value = (rawValue == DBNull.Value) ? null : rawValue;
-vector.SetValue(row, value);
-                }
-
-                vector.RebuildArrowArray();
-            }
-        }*/
 
         public void UpdateFromDataTable(DataTable table)
         {
@@ -269,21 +219,19 @@ vector.SetValue(row, value);
             for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
             {
                 var vector = _columns[colIndex];
-
                 for (int row = 0; row < RowCount; row++)
                 {
-                    var cell = table.Rows[row][colIndex];
-
-                    // DBNull.Value -> null
-                    if (cell == DBNull.Value)
-                        cell = null;
-
-                    vector.SetValue(row, cell);
+                    // vector.SetValue(row, table.Rows[row][colIndex]);
+                    object? rawValue = table.Rows[row][colIndex];
+                    object? value = (rawValue == DBNull.Value) ? null : rawValue;
+                    vector.SetValue(row, value);
                 }
 
                 vector.RebuildArrowArray();
             }
         }
+
+
 
         // =====================================================
         // 3. CSV + JSON метаданные

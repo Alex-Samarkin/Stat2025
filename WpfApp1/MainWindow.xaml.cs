@@ -111,6 +111,8 @@ namespace WpfApp1
             DataSetManager.Instance.Add(dataSetFromCsv);
             DataSetManager.Instance.Add(dataSetFromArrow);
             DataSetManager.Instance.Add(dataSetFromParquet);
+
+            
         }
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
