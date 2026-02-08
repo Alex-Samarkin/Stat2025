@@ -198,7 +198,24 @@ namespace WpfApp1.Variables
                 for (int colIndex = 0; colIndex < _columns.Count; colIndex++)
                 {
                     var value = _columns[colIndex].GetValue(row);
-                    values[colIndex] = value ?? DBNull.Value; // Ключевое исправление
+
+                    if (value == null)
+                    {
+                        values[colIndex] = DBNull.Value;
+                        continue;
+                    }
+
+                    // Decimal values from Apache.Arrow may be represented as Apache.Arrow.Decimal128.
+                    // Convert them to System.Decimal for DataTable compatibility.
+                    if (value.GetType().FullName == "Apache.Arrow.Decimal128")
+                    {
+                        // Fall back to parsing the string representation which is available
+                        // on Decimal128 to produce a System.Decimal value.
+                        values[colIndex] = decimal.Parse(value.ToString()!, System.Globalization.CultureInfo.InvariantCulture);
+                        continue;
+                    }
+
+                    values[colIndex] = value;
                 }
                 dt.Rows.Add(values);
             }

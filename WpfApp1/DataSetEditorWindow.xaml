@@ -62,19 +62,19 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Width="90" Text="Описание:"/>
                                 <TextBox Width="250"
-                                         Text="{Binding SelectedColumn.Variable.Description, Mode=TwoWay}"/>
+                                         Text="{Binding SelectedColumn.Variable.Description, Mode=OneWay}"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Width="90" Text="Ед. изм:"/>
                                 <TextBox Width="150"
-                                         Text="{Binding SelectedColumn.Variable.Unit, Mode=TwoWay}"/>
+                                         Text="{Binding SelectedColumn.Variable.Unit, Mode=OneWay}"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Width="90" Text="Формула:"/>
                                 <TextBox Width="250"
-                                         Text="{Binding SelectedColumn.Variable.Formula, Mode=TwoWay}"/>
+                                         Text="{Binding SelectedColumn.Variable.Formula, Mode=OneWay}"/>
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
